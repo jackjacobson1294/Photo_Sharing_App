@@ -124,7 +124,9 @@ def userPost():
 		if 'username' in session:
 			logged_in = True;
 		else:
-			return redirect(url_for('main.login_route'))
+			errors = []
+			errors.append({'message':'You do not have the necessary credentials for the resource'})
+			return jsonify(errors = errors), 401
 		db = extensions.connect_to_database()
 		cur = db.cursor()
 		cur.execute('use group120db')
@@ -242,3 +244,26 @@ def userPost():
 				'email': email
 			}
 			return jsonify(data = userDict), 201
+	elif request.method == "GET":
+		logged_in = False;
+		if 'username' in session:
+			logged_in = True;
+		else:
+			logged_in = False
+			errors = []
+			errors.append({'message':'You do not have the necessary credentials for the resource'})
+			return jsonify(errors = errors), 401
+		db = extensions.connect_to_database()
+		cur = db.cursor()
+		cur.execute('use group120db')
+		cur.execute('SELECT * FROM User WHERE username = "%s"' % (session['username']))
+		eml = cur.fetchall()
+		email = eml[0]['email']
+		userDict = {
+			'username': session['username'],
+			'firstname': session['firstname'],
+			'lastname': session['lastname'],
+			'email': email
+		}
+		return jsonify(data = userDict), 201
+

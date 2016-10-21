@@ -18,6 +18,23 @@
     </ul>
 
     <script type="text/javascript">
+        $(document).ready( function(e) {
+            $.ajax({
+                type: 'GET',
+                contentType: "application/json; charset=UTF-8",
+                url: 'http://localhost:3000/p2gkisj6/p3/api/v1/user',
+                success: function(data) {
+                    str = JSON.parse(JSON.stringify(data));
+                    str = str.data;
+                    $("#update_firstname_input").attr("value", str.firstname);
+                    $('#update_lastname_input').attr("value", str.lastname);
+                    $('#update_email_input').attr("value", str.email);
+                },
+                error: function() {
+                    window.location.href = "http://localhost:3000/p2gkisj6/p3/login";
+                }
+            });
+        });
         $('#update_user').submit( function(e) {
             $('.error').remove();
             e.preventDefault();
