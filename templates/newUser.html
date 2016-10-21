@@ -1,71 +1,53 @@
 {% extends "base.html" %}
 {% block content %}
-    <h1>EECS485 PROJECT 1
-    </p>
-    {% if blankUser %}
-    <p class="error">Username may not be left blank</p>
-    {% endif %}
-    {% if blankFirst %}
-    <p class="error">Firstname may not be left blank</p>
-    {% endif %}
-    {% if blankLast %}
-    <p class="error">Lastname may not be left blank</p>
-    {% endif %}
-    {% if blankEml %}
-    <p class="error">Email may not be left blank</p>
-    {% endif %}
-    {% if blankPw1 %}
-    <p class="error">Password may not be left blank</p>
-    {% endif %}
-    {% if lenUser %}
-    <p class="error">Username must be no longer than 20 characters</p>
-    {% endif %}
-    {% if lenFirst %}
-    <p class="error">Firstname must be no longer than 20 characters</p>
-    {% endif %}
-    {% if lenLast %}
-    <p class="error">Lastname must be no longer than 20 characters</p>
-    {% endif %}
-    {% if uniqueUser %}
-    <p class="error">This username is taken</p>
-    {% endif %}
-    {% if lenUser3 %}
-    <p class="error">Usernames must be at least 3 characters long</p>
-    {% endif %}
-    {% if lenPass %}
-    <p class="error">Passwords must be at least 8 characters long</p>
-    {% endif %}
-    {% if passMatch %}
-    <p class="error">Passwords do not match</p>
-    {% endif %}
-    {% if specCharsUser %}
-    <p class="error">Usernames may only contain letters, digits, and underscores</p>
-    {% endif %}
-    {% if specCharsPass %}
-    <p class="error">Passwords may only contain letters, digits, and underscores</p>
-    {% endif %}
-    {% if emailLen %}
-    <p class="error">Email must be no longer than 40 characters</p>
-    {% endif %}
-    {% if emailSyn %}
-    <p class="error">Email address must be valid</p>
-    {% endif %}
-    {% if passSyn %}
-    <p class="error">Passwords must contain at least one letter and one number</p>
-    {% endif %}
-    </h1>
+    <h1>EECS485 PROJECT 1</h1>
     <p class="center">
-     New User
+    New User
     </p>
     <ul>
-        <form action="{{url_for('main.newUser_route')}}" method="POST">   
+        <div id="errors_mess"></div>
+        <form>   
             Username: <input type ="text" name="username" id="new_username_input"><br/>
             First Name: <input type ="text" name="firstname" id="new_firstname_input"><br/>
             Last Name: <input type ="text" name="lastname" id="new_lastname_input"><br/>
             Password: <input type="password" name="password1" id="new_password1_input"><br/>
             Confirm Password: <input type="password" name="password2" id="new_password2_input"><br/>
             Email: <input type ="text" name="email" id="new_email_input"><br/>
-            <input type="submit" value="submit" id="new_submit">
+            <button id="new_submit">Submit</button>
         </form>
+        <script type="text/javascript">
+            $('#new_submit').click( function(e) {
+                e.preventDefault();
+                $.ajax({
+                    type: 'POST',
+                    contentType: "application/json; charset=UTF-8",
+                    data: JSON.stringify({'username': $("#new_username_input").val(),
+                            'firstname': $("#new_firstname_input").val(),
+                            'lastname': $("#new_lastname_input").val(),
+                            'password1': $("#new_password1_input").val(),
+                            'password2': $("#new_password2_input").val(),
+                            'email': $("#new_email_input").val()}),
+                    url: 'http://localhost:3000/p2gkisj6/p3/api/v1/user',
+                    success: function(data) {
+                        window.location.href = "http://localhost:3000/p2gkisj6/p3/login";
+                    },
+                    error: function(errors) {
+                        str = JSON.stringify(errors);
+                        console.log(JSON.parse(str).responseText);
+
+                        
+                        //str = JSON.parse(str);
+                        //str = str.responseText;
+                        //str = JSON.parse(str);
+                        //message = str.message;
+                        //console.log(message);
+                        
+                        for(error in errors){
+                            $('#errors_mess').append('<div class="error">' + error.message + '</div>');
+                        }
+                    }
+                });
+            });
+        </script>
     </ul>
 {% endblock %}
