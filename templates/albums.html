@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block content %}
+    <h1>ALBUMS {{username}}</h1>
+    <p class="important">
+      Welcome!
+    </p>
+    {% if edit %}
+            <div>
+                <table>
+                    {% for album in albums %}
+                    <tr>
+                        <td> {{album['title']}} </td>
+                        <td> 
+                            <a href="{{ url_for('album.album_edit_route', albumid=album['albumid']) }}"><input type ="hidden" value="edit" id="album_edit_{{album['albumid']}}_link" method="get"> Edit Album</a>
+                            
+
+                            <form action=" {{url_for('albums.albums_edit_route') }}" method="POST">   
+                            <input type ="hidden" value="{{album['albumid']}}" name="albumid" >
+                            <input type="hidden" value="{{album['username']}}" name="username" >
+                            <input type ="submit" name="op" value="delete" id="delete_album_{{album['albumid']}}"></form>
+
+                        </td>
+
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            <div>
+                <form action="{{ url_for('albums.albums_edit_route') }}" method="POST">
+                    <input type="text" id="album_add_name" name="title">
+                    <input type="hidden" name="username" value="{{username}}">
+                    <input type="submit" name="op" value="add" id="album_add_submit">
+                </form>
+            </div>
+
+    {% else %}
+        {%if logged_in%}
+            <a href="{{ url_for('albums.albums_edit_route')}}"> <input type="hidden" id="user_albums_edit_{{username}}" method="get"> Edit Albums</a>
+            {% for album in albums %}
+                <div>
+                    {{album['title']}}
+                    <a href="{{ url_for('album.album_route', albumid=album['albumid']) }}" id="album_{{album['albumid']}}_link">View Album</a>
+                </div>
+            {% endfor %}
+
+        {%else%}
+            {%for album in public_albums%}
+                <div>
+                {{album['title']}}
+                    <a href="{{ url_for('album.album_route', albumid=album['albumid']) }}" id="album_{{album['albumid']}}_link">View Album</a>
+                </div>
+            {%endfor%}
+        {%endif%}
+    
+    {% endif %}
+    
+{% endblock %}

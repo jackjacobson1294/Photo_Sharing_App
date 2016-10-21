@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block content %}
+    <h1>EECS485 PROJECT 1
+    <p class="center">
+     Edit User
+    {% if firstLength %}
+    <p class="error">Firstname must be no longer than 20 characters</p>
+    {% endif %}
+    {% if lastLength %}
+    <p class="error">Lastname must be no longer than 20 characters</p>
+    {% endif %}
+    {% if lenPass %}
+    <p class="error">Passwords must be at least 8 characters long</p>
+    {% endif %}
+    {% if passMatch %}
+    <p class="error">Passwords do not match</p>
+    {% endif %}
+    {% if specCharsPass %}
+    <p class="error">Passwords may only contain letters, digits, and underscores</p>
+    {% endif %}
+    {% if emailLen %}
+    <p class="error">Email must be no longer than 40 characters</p>
+    {% endif %}
+    {% if emailSyn %}
+    <p class="error">Email address must be valid</p>
+    {% endif %}
+    {% if passSyn %}
+    <p class="error">Passwords must contain at least one letter and one number</p>
+    {% endif %}
+    </h1>
+    <ul>
+        <form action="{{url_for('main.user_edit_route')}}" method="POST">
+            New First Name: <input type="text" name="firstname" id="update_firstname_input">
+            <input type="submit" value="Edit Firstname" id="update_firstname_submit">
+        </form>
+
+        <form action="{{url_for('main.user_edit_route')}}" method="POST">   
+            New Last Name: <input type="text" name="lastname" id="update_lastname_input">
+            <input type="submit" value="Edit Lastname" id="update_lastname_submit">
+        </form>
+
+        <form action="{{url_for('main.user_edit_route')}}" method="POST"> 
+            New Email: <input type ="text" name="email" id="update_email_input">
+            <input type="submit" value="Edit Email" id="update_email_submit">
+        </form>
+
+        <form action="{{url_for('main.user_edit_route')}}" method="POST">   
+            New Password: <input type="password" name="password1" id="update_password1_input">
+            Confirm New Password: <input type="password" name="password2" id="update_password2_input">
+            <input type="submit" value="Edit Password" id="update_password_submit">
+        </form>
+    </ul>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+	{% for p in pic %}
+			<img src="/static/images/{{p['picid']}}.{{p['format']}}" height="300" size="300"></img>
+			<br>
+			<p id="pic_{{p['picid']}}_caption"> {{pic_in_contain[0]['caption']}} </p>
+			{%if owner%}
+				<form action="{{url_for('pic.pic_route')}}" method="POST">
+				<input type="hidden" name="picid" value="{{p['picid']}}" >
+				<input type="text" name="caption" id="pic_caption_input">
+				<input type="submit" name="op" value="Change caption" id="pic_caption_submit"> </form>
+			{%endif%}
+
+	{% endfor %}
+	{% if prevID != '' %}
+
+		<a href="{{ url_for('pic.pic_route', picid = prevID)}}" id="prev_pic">Prev Pic</a>
+	{% endif %}
+	{% if nextID != '' %}
+		<a href="{{ url_for('pic.pic_route', picid = nextID)}}" id="next_pic">Next Pic</a>
+	{% endif %}
+	<br>
+	<a href="{{ url_for('album.album_route', albumid = album_id) }}" id="parent_album">Back to Album</a>
+{% endblock %}

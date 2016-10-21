@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+    <h1>EECS485 PROJECT 1</h1>
+    <p class="center">
+      Welcome!
+    </p>
+    <ul>
+    {% if logged_in %}
+        {% for album in private_albums %}
+            <div>
+                <a href="{{ url_for('album.album_route', albumid=album['albumid'])}}" id="album_{{album['albumid']}}_link">{{album['title']}}</a>
+            </div>
+        {% endfor %}
+        {% for album in user_access_albums %}
+            {% for temp in all_albums%}
+                {%if temp['albumid'] == album['albumid']%}
+                    <div>
+                        <a href="{{ url_for('album.album_route', albumid=album['albumid'])}}" id="album_{{album['albumid']}}_link">{{temp['title']}}</a>
+                    </div>
+                {%endif%}
+            {%endfor%}
+        {% endfor %}
+    {% else %}
+        <a href="{{ url_for('main.newUser_route')}}" id="home_user_create">New User</a>
+        <a href="{{ url_for('main.login_route')}}" id="home_login">Log In</a>
+        {% for user in users %}
+            <div>
+                {{ user['username'] }}
+                <a href="{{ url_for('albums.albums_route', username=user['username'])}}" id="user_albums_{{user['username']}}">View Albums</a>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {% for album in public_albums %}
+        <div>
+            <a href="{{ url_for('album.album_route', albumid=album['albumid'])}}" id="album_{{album['albumid']}}_link">{{album['title']}}</a>
+        </div>
+    {% endfor %}
+    </ul>
+{% endblock %}
