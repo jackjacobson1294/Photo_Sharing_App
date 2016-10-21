@@ -5,7 +5,8 @@
     New User
     </p>
     <ul>
-        <div id="errors_mess"></div>
+        <div id="error_mess"></div>
+        <br>
         <form>   
             Username: <input type ="text" name="username" id="new_username_input"><br/>
             First Name: <input type ="text" name="firstname" id="new_firstname_input"><br/>
@@ -13,10 +14,11 @@
             Password: <input type="password" name="password1" id="new_password1_input"><br/>
             Confirm Password: <input type="password" name="password2" id="new_password2_input"><br/>
             Email: <input type ="text" name="email" id="new_email_input"><br/>
-            <button id="new_submit">Submit</button>
+            <input type="submit" id="new_submit">Submit
         </form>
         <script type="text/javascript">
-            $('#new_submit').click( function(e) {
+            $('#new_submit').submit( function(e) {
+                $('.error').remove();
                 e.preventDefault();
                 $.ajax({
                     type: 'POST',
@@ -32,19 +34,14 @@
                         window.location.href = "http://localhost:3000/p2gkisj6/p3/login";
                     },
                     error: function(errors) {
-                        str = JSON.stringify(errors);
-                        console.log(JSON.parse(str).responseText);
-
-                        
-                        //str = JSON.parse(str);
-                        //str = str.responseText;
-                        //str = JSON.parse(str);
-                        //message = str.message;
-                        //console.log(message);
-                        
-                        for(error in errors){
-                            $('#errors_mess').append('<div class="error">' + error.message + '</div>');
+                        str = JSON.parse(JSON.stringify(errors));
+                        str = str.responseText;
+                        str = JSON.parse(str);
+                        str = str.errors;
+                        for(x in str){
+                            $('#error_mess').append('<p class="error">' + str[x].message + '</div>')
                         }
+
                     }
                 });
             });
