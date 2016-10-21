@@ -11,7 +11,7 @@ Example Project Below README.md:
 	- Julia Kollin (jskollin): worked on entire project with team members
 	- Jennifer Winkler (jenwink): worked on entire project with team members
 ### Live Access:
-  - [http://class6.eecs.umich.edu:6975/p2gkisj6/p1/]
+  - [http://class6.eecs.umich.edu:6975/p2gkisj6/p3/]
 
 ### Extra:
-# p1_xjw77p
+# p3_xjw77p
