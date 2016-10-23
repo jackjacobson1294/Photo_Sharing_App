@@ -7,7 +7,7 @@
     <ul>
         <div id="error_mess"></div>
         <br>
-        <form>   
+        <form id="new_user">   
             Username: <input type ="text" name="username" id="new_username_input"><br/>
             First Name: <input type ="text" name="firstname" id="new_firstname_input"><br/>
             Last Name: <input type ="text" name="lastname" id="new_lastname_input"><br/>
@@ -17,7 +17,7 @@
             <input type="submit" id="new_submit">Submit
         </form>
         <script type="text/javascript">
-            $('#new_submit').submit( function(e) {
+            $('#new_user').submit( function(e) {
                 $('.error').remove();
                 e.preventDefault();
                 $.ajax({

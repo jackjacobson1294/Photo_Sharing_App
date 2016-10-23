@@ -1,26 +1,46 @@
 {% extends "base.html" %}
 {% block content %}
     <h1>EECS485 PROJECT 1</h1>
-    {% if blankUser %}
-    <p class="error">Username may not be left blank</p>
-    {% endif %}
-    {% if blankPwd %}
-    <p class="error">Password may not be left blank</p>
-    {% endif %}
-    {% if wrongPwd %}
-    <p class="error">Password is incorrect for the specified username</p>
-    {% endif %}
-    {% if noUser %}
-    <p class="error">Username does not exist</p>
-    {% endif %}
     <p class="center">
       Login
     </p>
     <ul>
-        <form action="{{url_for('main.login_route')}}" method="POST">   
+        <div id="error_mess"></div>
+        <form id="login_user">   
             Username: <input type ="text" name="username" id="login_username_input">
             Password: <input type="password" name="password" id="login_password_input">
             <input type="submit" value="submit" id="login_submit">
         </form>
-    </ul>
+
+        <script type="text/javascript">
+            $(document).ready( function(e) {
+                $('#login_link').hide();
+            });
+            $('#login_user').submit( function(e) {
+                e.preventDefault();
+                $('.error').remove();
+                $.ajax({
+                    type: 'POST',
+                    contentType: "application/json; charset=UTF-8",
+                    data: JSON.stringify(
+                            {'username': $("#login_username_input").val(),
+                            'password': $("#login_password_input").val()}),
+                    url: 'http://localhost:3000/p2gkisj6/p3/api/v1/login',
+                    success: function(data) {
+                        window.location.href = "http://localhost:3000/p2gkisj6/p3/";
+                    },
+                    error: function(errors) {
+                        str = JSON.parse(JSON.stringify(errors));
+                        str = str.responseText;
+                        str = JSON.parse(str);
+                        str = str.errors;
+                        for(x in str){
+                            $('#error_mess').append('<p class="error">' + str[x].message + '</div>')
+                        }
+
+                    }
+                });
+            });
+        </script>
+     </ul>
 {% endblock %}

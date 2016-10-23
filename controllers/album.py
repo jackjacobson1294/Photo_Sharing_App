@@ -61,7 +61,7 @@ def album_edit_route():
             "users_with_access": users_with_access,
             "access": access
         }
-        return render_template("album.html", **options)
+        return render_template("album_edit.html", **options)
     else:
         album_id = request.form.get('albumid')
         if not album_id:
@@ -153,57 +153,7 @@ def album_edit_route():
     
 @album.route('/album')
 def album_route():
-    db = extensions.connect_to_database()
-    cur = db.cursor()
-    album_id = request.args.get('albumid')
-    if not album_id:
-        abort(404)
-    album_id = int(album_id)
-    logged_in = False
-    if 'username' in session:
-        logged_in = True
-    if logged_in:
-        user = session['username']
-    else:
-        user = request.args.get('username')
-    if album_id < 1:
-        abort(404)
-    cur.execute('USE group120db')
-    cur.execute('SELECT * FROM Album WHERE albumid = %d' % (album_id))
-    album_exist = cur.fetchall()
-    if not album_exist:
-        abort(404)
-    owner = album_exist[0]['username']
-    owner_var = False
-    has_access = False
-    if owner == user:
-        owner_var = True
-        has_access = True
-    if album_exist[0]['access'] == 'private':
-        if not user:
-            return redirect(url_for('main.login_route'))
-        else:
-            cur.execute('SELECT * FROM AlbumAccess WHERE albumid = %d' % (album_id))
-            users = cur.fetchall()
-            for person in users:
-                if person['username'] == user:
-                    has_access = True
-    else:
-        has_access = True
-    if not has_access:
-        abort(403)
-    cur.execute('SELECT * FROM Contain WHERE albumid = %d' % (album_id))
-    pics = cur.fetchall()
-    cur.execute('SELECT * FROM Photo')
-    photos = cur.fetchall()
-    options = {
-        "edit": False,
-        "album_id": album_id,
-        "pics": pics,
-        "photos": photos,
-        "owner": owner_var
-    }
-    return render_template("album.html", **options)
+    return render_template("album.html")
 
 
 

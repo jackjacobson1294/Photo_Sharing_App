@@ -1,66 +1,84 @@
 {% extends "base.html" %}
 {% block content %}
-    <h1>ALBUM</h1>
-    <p class="important">
-      Welcome!
-    </p>
-    {% if edit %}
-        <form action="{{ url_for('album.album_edit_route')}}" method="POST">
-        <input type="radio" name="access" value="public" id="album_edit_public_radio" > Public<br/>
-        <input type="radio" name="access" value="private" id="album_edit_private_radio" > Private<br/>
-        <input type="hidden" name ="albumid" value="{{album_id}}">
-        <input type="submit" name="op" value="access" id="album_edit_access_submit"></form>
-        <table>
-            <tr><th>Username</th><th>Update Access</th></tr> 
-            {% for user in users_with_access %}
-                <tr><td>{{user['username']}} </td>
-                <td><form action="{{ url_for('album.album_edit_route')}}" method="POST">
-                <input type="hidden" name="albumid" value="{{album_id}}">
-                <input type="hidden" name="username" value = "{{user['username']}}">
-                <input type="submit" name="op" value="revoke" id="album_edit_revoke_{{user['username']}}"></form></td>
-                </tr>
-            {% endfor %}
+    <div id="content"></div>
+    <script type="text/javascript">
+        $(document).ready( function(e) {
+                $('#content').empty();
+                var params = window.location.href;
+                params = params.split("=")[1];
+                var current_user = '';
+                var owner = '';
+                var pics = [];
+                var access = '';
+                var title = '';
+                $.ajax({
+                    type: 'GET',
+                    url: 'http://localhost:3000/p2gkisj6/p3/api/v1/user',
+                    success: function(data) {
+                        data = data.data;
+                        current_user = data.username;
+                    },
+                    error: function(errors) {
+                        current_user = null;
+                    }
+                });
+                $.ajax({
+                    type: 'GET',
+                    url: 'http://localhost:3000/p2gkisj6/p3/api/v1/album/' + params,
+                    success: function(album) {
+                        album = album.album;
+                        owner = album.username;
+                        pics = album.pics;
+                        access = album.access;
+                        title = album.title;
+                    },
+                    error: function(errors) {
+                        str = JSON.parse(JSON.stringify(errors));
+                        message = str.responseText;
+                        message = JSON.parse(message);
+                        message = message.errors[0].message;
+                        status = str.status;
+                        $('#content').append('<p class="error">' + message + '</div>')
+                    },
+                    complete: function(status) {
+                        //check if private, if current user has access
+                        if(status.status == 200){
+                            $('#content').append('<p>' + title + ' by ' + owner + '</p>');
+                            for(pic in pics){
+                                $('#content').append('<div><a id="pic_' + pics[pic].picid + '_link" class="picture"><img src=/static/images/' + pics[pic].picid + '.' + pics[pic].format + ' height="75" width="75" display:"inline-block"></img></a><br>' + pics[pic].date + '<br>' + pics[pic].caption + '<br></div>')
+                            }                    
+                        }
+                    }
+                });
+            });
+            $('.picture').click( function() {
+                $('.pictures').remove();
+                $.ajax({
+                    type: 'GET',
+                    url: 'http://localhost:3000/p2gkisj6/p3/api/v1/pic',
+                    success: function(data) {
+                        data = data.data;
+                        current_user = data.username;
+                    },
+                    error: function(errors) {
+                        current_user = null;
+                    }
+                });
+            });
 
-        <tr>
-         <form action="{{ url_for('album.album_edit_route')}}" method="POST">
-           <tr><td>New:
-             <input type="text" name = "username" id="album_edit_grant_input"> </td>
-             <td><input type="hidden" name="albumid" value="{{album_id}}">
-             <input type="submit" name="op" value="grant" id="album_edit_grant_submit"></td>
-         </form>
-        </tr>
-        </table>
-        {% for pic in pics %}
-            {% for photo in photos %}
-                {% if pic['picid'] == photo['picid'] %}
-                     <div>
-                        <a href="{{ url_for('pic.pic_route', picid = pic['picid'])}}" id="pic_{{pic['picid']}}_link"><img src="/static/images/{{pic['picid']}}.{{photo['format']}}" height="75" width="75" display:"inline-block"></img></a>
-                        <form action=" {{url_for('album.album_edit_route') }}" method="POST">   
-                            <input type ="hidden" value="{{pic['picid']}}" name="picid" >
-                            <input type="hidden" value="{{album_id}}" name="albumid">
-                            <input type ="submit" value="delete" name="op" id="delete_pic_{{pic['picid']}}">
-                        </form>
-                    </div>
 
-                {% endif %}
-            {% endfor %}
-        {% endfor %}
-        <form action="{{url_for('album.album_edit_route', albumid=album_id) }}" method="POST" enctype="multipart/form-data">
-        <input type ="hidden" value= "{{album_id}}" name="albumid">
-        <input type ="file" name="file" id="file_input">
-        <input type="submit" value= "add" name="op" id ="file_submit"> </form>
-    {% else %}
-         <div>
-        {% for pic in pics %}
-            {% for photo in photos %}
-                {% if pic['picid'] == photo['picid'] %}
-                   <a href="{{ url_for('pic.pic_route', picid = pic['picid'])}}" id="pic_{{pic['picid']}}_link"><img src="/static/images/{{pic['picid']}}.{{photo['format']}}" height="75" width="75" display:"inline-block"></img></a>
-                {% endif %}
-            {% endfor %}
-        {% endfor %}
-        {% if owner %}
-         <a href="{{ url_for('album.album_edit_route', albumid = album_id) }}" id="album_edit_{{album_id}}_link">Edit Album</a>
-        {% endif %}
-    </div>
-    {% endif %}
+
+            window.onpopstate = function(event) {
+                document.getElementById("content").innerHTML = event.state.stateVariable;
+            }
+
+            var state1Obj = {stateVariable: "I am currently in state 1!"}
+            var state2Obj = {stateVariable: "Now I am in state 2!"}
+            var state3Obj = {stateVariable: "Now I am currently in state 3!"}
+            history.replaceState(state3Obj, "title", "?state=3")
+            history.pushState(state2Obj, "title", "?state=2")
+            history.pushState(state1Obj, "title", "?state=1")
+
+            document.getElementById("content").innerHTML = state1Obj.stateVariable
+    </script>
 {% endblock %}

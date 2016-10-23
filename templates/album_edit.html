@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block content %}
+    <h1>ALBUM</h1>
+    <p class="important">
+      Welcome!
+    </p>
+        <form action="{{ url_for('album.album_edit_route')}}" method="POST">
+        <input type="radio" name="access" value="public" id="album_edit_public_radio" > Public<br/>
+        <input type="radio" name="access" value="private" id="album_edit_private_radio" > Private<br/>
+        <input type="hidden" name ="albumid" value="{{album_id}}">
+        <input type="submit" name="op" value="access" id="album_edit_access_submit"></form>
+        <table>
+            <tr><th>Username</th><th>Update Access</th></tr> 
+            {% for user in users_with_access %}
+                <tr><td>{{user['username']}} </td>
+                <td><form action="{{ url_for('album.album_edit_route')}}" method="POST">
+                <input type="hidden" name="albumid" value="{{album_id}}">
+                <input type="hidden" name="username" value = "{{user['username']}}">
+                <input type="submit" name="op" value="revoke" id="album_edit_revoke_{{user['username']}}"></form></td>
+                </tr>
+            {% endfor %}
+
+        <tr>
+         <form action="{{ url_for('album.album_edit_route')}}" method="POST">
+           <tr><td>New:
+             <input type="text" name = "username" id="album_edit_grant_input"> </td>
+             <td><input type="hidden" name="albumid" value="{{album_id}}">
+             <input type="submit" name="op" value="grant" id="album_edit_grant_submit"></td>
+         </form>
+        </tr>
+        </table>
+        {% for pic in pics %}
+            {% for photo in photos %}
+                {% if pic['picid'] == photo['picid'] %}
+                     <div>
+                        <a href="{{ url_for('pic.pic_route', picid = pic['picid'])}}" id="pic_{{pic['picid']}}_link"><img src="/static/images/{{pic['picid']}}.{{photo['format']}}" height="75" width="75" display:"inline-block"></img></a>
+                        <form action=" {{url_for('album.album_edit_route') }}" method="POST">   
+                            <input type ="hidden" value="{{pic['picid']}}" name="picid" >
+                            <input type="hidden" value="{{album_id}}" name="albumid">
+                            <input type ="submit" value="delete" name="op" id="delete_pic_{{pic['picid']}}">
+                        </form>
+                    </div>
+
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+        <form action="{{url_for('album.album_edit_route', albumid=album_id) }}" method="POST" enctype="multipart/form-data">
+        <input type ="hidden" value= "{{album_id}}" name="albumid">
+        <input type ="file" name="file" id="file_input">
+        <input type="submit" value= "add" name="op" id ="file_submit"> </form>
+{% endblock %}

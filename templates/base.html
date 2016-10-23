@@ -13,9 +13,33 @@
   	<a href="{{url_for('main.main_route')}}" id="nav_home">Home</a>
   	<a href="{{url_for('albums.albums_route')}}" id="nav_albums">My Albums</a>
   	<a href="{{ url_for('main.user_edit_route')}}" id="nav_edit">Edit Account</a>
-  	<form action="{{url_for('main.logout_route')}}" method="POST">
+  	<form id="logout_form">
   		<input type="submit" id="nav_logout" value="Logout">
   	</form>
+    <div id="error_mess"></div>
+    <script type="text/javascript">
+      $('#logout_form').submit( function(e) {
+          e.preventDefault();
+          $.ajax({
+              type: 'POST',
+              url: 'http://localhost:3000/p2gkisj6/p3/api/v1/logout',
+              success: function() {
+                window.location.href = "http://localhost:3000/p2gkisj6/p3";
+              },
+              error: function(errors) {
+                str = JSON.parse(JSON.stringify(errors));
+                str = str.responseText;
+                str = JSON.parse(str);
+                str = str.errors;
+                for(x in str){
+                    $('#error_mess').append('<p class="error">' + str[x].message + '</div>')
+                }
+              }
+          });
+      });
+    </script>
+  {% else %}
+    <a href="{{url_for('main.login_route')}}" id="login_link">Login</a>
   {% endif %}
   <div class="center">
     {% block content %}{% endblock %}
