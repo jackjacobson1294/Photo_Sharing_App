@@ -16,6 +16,7 @@ app.register_blueprint(api.user, url_prefix='/p2gkisj6/p3')
 app.register_blueprint(api.logout, url_prefix='/p2gkisj6/p3')
 app.register_blueprint(api.login, url_prefix='/p2gkisj6/p3')
 app.register_blueprint(api.album_api, url_prefix='/p2gkisj6/p3')
+app.register_blueprint(api.pic_api, url_prefix='/p2gkisj6/p3')
 
 # Listen on external IPs
 # For us, listen to port 3000 so you can just run 'python app.py' to start the server
