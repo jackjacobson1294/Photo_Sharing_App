@@ -3,120 +3,125 @@
     <div id="content"></div>
     <script type="text/javascript">
         $(document).ready( function(e) {
-                $('#content').empty();
-                var params = window.location.href;
-                params = params.split("=")[1];
-                var current_user = '';
-                var owner = '';
-                var pics = [];
-                var access = '';
-                var title = '';
-                $.ajax({
-                    type: 'GET',
-                    url: 'http://localhost:3000/p2gkisj6/p3/api/v1/user',
-                    success: function(data) {
-                        data = data.data;
-                        current_user = data.username;
-                    },
-                    error: function(errors) {
-                        current_user = null;
-                    }
-                });
-                $.ajax({
-                    type: 'GET',
-                    url: 'http://localhost:3000/p2gkisj6/p3/api/v1/album/' + params,
-                    success: function(album) {
-                        album = album.album;
-                        owner = album.username;
-                        pics = album.pics;
-                        access = album.access;
-                        title = album.title;
-                    },
-                    error: function(errors) {
-                        str = JSON.parse(JSON.stringify(errors));
-                        message = str.responseText;
-                        message = JSON.parse(message);
-                        message = message.errors[0].message;
-                        status = str.status;
-                        $('#content').append('<p class="error">' + message + '</div>')
-                    },
-                    complete: function(status) {
-                        //check if private, if current user has access
-                        if(status.status == 200){
-                            $('#content').append('<p>' + title + ' by ' + owner + '</p>');
-                            for(pic in pics){
-                                $('#content').append('<a id="pic_' + pics[pic].picid + '_link" class="picture"><img src=/static/images/' + pics[pic].picid + '.' + pics[pic].format + ' height="75" width="75" display:"inline-block"></a><br>' + pics[pic].date + '<br>' + pics[pic].caption + '<br>');
-                            }
+                album_page();
+                function picture(id, owner, current_user){
+                    $('#content').empty();
+                    var albumid = '';
+                    var caption = '';
+                    var format = '';
+                    var next = '';
+                    var picid = '';
+                    var prev = '';
+                    $.ajax({
+                        type: 'GET',
+                        url: 'http://localhost:3000/p2gkisj6/p3/api/v1/pic/' + id,
+                        success: function(pic){
+                            pic = pic.pic;
+                            console.log(pic);
+                            albumid = pic.albumid;
+                            caption = pic.caption;
+                            format = pic.format;
+                            next = pic.next;
+                            picid = pic.picid;
+                            prev = pic.prev;
+                            console.log(next);
+                            console.log(prev);
+                        },
+                        error: function(errors){
+                            str = JSON.parse(JSON.stringify(errors));
+                            message = str.responseText;
+                            message = JSON.parse(message);
+                            message = message.errors[0].message;
+                            status = str.status;
+                            $('#content').append('<p class="error">' + message + '</div>')
+                        },
+                        complete: function(status) {
+                            //check if private, if current user has access
+                            if(status.status == 200){
+                                $('#content').append('<img src=/static/images/' + picid + '.' + format + ' height="75" width="75" display:"inline-block">');
+                                if(owner == current_user){
+                                    $('#content').append('<form><input type="text" name="caption" id="pic_caption_input" value="' + caption + '"></form>');
+                                }
+                                else{
+                                    $('#content').append('<p name="caption" id="pic_' + picid + '_caption">' + caption + '</p>');
+                                }
+                                $('#content').append('<a href="" id="prev_pic">Prev Pic</a><br>');
+                                $('#content').append('<a href="" id="next_pic">Next Pic</a><br>');
+                                $('#content').append('<a href="" id="parent_album">Back to Album</a><br>');
 
-                            $("a").on("click", function(e) {
-                                $('#content').empty();
-                                id = $(this).attr("id");
-                                id = id.split("_")[1];
-                                console.log(id);
-                                var albumid = '';
-                                var caption = '';
-                                var format = '';
-                                var next = '';
-                                var picid = '';
-                                var prev = '';
-                                $.ajax({
-                                    type: 'GET',
-                                    url: 'http://localhost:3000/p2gkisj6/p3/api/v1/pic/' + id,
-                                    success: function(pic){
-                                        pic = pic.pic;
-                                        console.log(pic);
-                                        albumid = pic.albumid;
-                                        caption = pic.caption;
-                                        format = pic.format;
-                                        next = pic.next;
-                                        picid = pic.picid;
-                                        prev = pic.prev;
-                                    },
-                                    error: function(errors){
-                                        str = JSON.parse(JSON.stringify(errors));
-                                        message = str.responseText;
-                                        message = JSON.parse(message);
-                                        message = message.errors[0].message;
-                                        status = str.status;
-                                        $('#content').append('<p class="error">' + message + '</div>')
-                                    },
-                                    complete: function(status) {
-                                        //check if private, if current user has access
-                                        console.log(status);
-                                        if(status.status == 200){
-                                            $('#content').append('<img src=/static/images/' + picid + '.' + format + ' height="75" width="75" display:"inline-block">');
-                                            if(owner == current_user){
-                                                $('#content').append('<input type="text" name="caption" id="pic_caption_input" value="' + caption + '">');
-                                            }
-                                            else{
-                                                $('#content').append('<p name="caption" id="pic_' + picid + '_caption">' + caption + '</p>');
-                                            }
-                                            $('#content').append('<a href="" id="prev_pic">Prev Pic</a><br>');
-                                            $('#content').append('<a href="" id="next_pic">Next Pic</a><br>');
-                                            $('#content').append('<a href="" id="parent_album">Back to Album</a><br>');
-                                        }
-                                    }
+                                $('#parent_album').click( function(e) {
+                                    e.preventDefault();
+                                    album_page();
                                 });
-                            });
-
+                                $('#next_pic').click( function(e) {
+                                    e.preventDefault();
+                                    picture(next, owner, current_user);
+                                });
+                                $('#prev_pic').click( function(e) {
+                                    e.preventDefault();
+                                    picture(prev, owner, current_user);
+                                });
+                            }
                         }
-                    }
-                });
+                    });
+                }
+                function album_page(){
+                    $('#content').empty();
+                    var params = window.location.href;
+                    params = params.split("=")[1];
+                    var current_user = '';
+                    var owner = '';
+                    var pics = [];
+                    var access = '';
+                    var title = '';
+                    $.ajax({
+                        type: 'GET',
+                        url: 'http://localhost:3000/p2gkisj6/p3/api/v1/user',
+                        success: function(data) {
+                            data = data.data;
+                            current_user = data.username;
+                        },
+                        error: function(errors) {
+                            current_user = null;
+                        }
+                    });
+                    $.ajax({
+                        type: 'GET',
+                        url: 'http://localhost:3000/p2gkisj6/p3/api/v1/album/' + params,
+                        success: function(album) {
+                            album = album.album;
+                            owner = album.username;
+                            pics = album.pics;
+                            access = album.access;
+                            title = album.title;
+                        },
+                        error: function(errors) {
+                            str = JSON.parse(JSON.stringify(errors));
+                            message = str.responseText;
+                            message = JSON.parse(message);
+                            message = message.errors[0].message;
+                            status = str.status;
+                            $('#content').append('<p class="error">' + message + '</div>')
+                        },
+                        complete: function(status) {
+                            //check if private, if current user has access
+                            if(status.status == 200){
+                                $('#content').append('<p>' + title + ' by ' + owner + '</p>');
+                                for(pic in pics){
+                                    $('#content').append('<a id="pic_' + pics[pic].picid + '_link" class="picture"><img src=/static/images/' + pics[pic].picid + '.' + pics[pic].format + ' height="75" width="75" display:"inline-block"></a><br>' + pics[pic].date + '<br>' + pics[pic].caption + '<br>');
+                                }
+
+                                $("a").on("click", function(e) {
+                                    e.preventDefault();
+                                    id = $(this).attr("id");
+                                    id = id.split("_")[1];
+                                    picture(id, owner, current_user);
+                                });
+                            }
+                        }
+                    });
+                }
+  
             });
-
-
-
-            window.onpopstate = function(event) {
-                document.getElementById("content").innerHTML = event.state.stateVariable;
-            }
-
-            var state1Obj = {stateVariable: "I am currently in state 1!"}
-            var state2Obj = {stateVariable: "Now I am in state 2!"}
-            var state3Obj = {stateVariable: "Now I am currently in state 3!"}
-            history.replaceState(state3Obj, "title", "?state=3")
-            history.pushState(state2Obj, "title", "?state=2")
-            history.pushState(state1Obj, "title", "?state=1")
-
-            document.getElementById("content").innerHTML = state1Obj.stateVariable
     </script>
 {% endblock %}

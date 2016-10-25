@@ -63,18 +63,20 @@ def pic(pic_id):
 			errors = []
 			errors.append({'message':"You do not have the necessary credentials for the resource"})
 			return jsonify(errors=error), 401
+	cur.execute('SELECT * FROM Contain WHERE albumid = %d' % (album_id))
+	albid = cur.fetchall()
 	prevID = ''
 	nextID = ''
-	for i in range(0, len(alb)):
-		if(pic_in_contain[i]['picid'] == pic_id):
-			if(len(alb) != 1):
-				if(i != 0 and i != len(alb) - 1):
-					prevID = pic_in_contain[i - 1]['picid']
-					nextID = pic_in_contain[i + 1]['picid']
+	for i in range(0, len(albid)):
+		if(albid[i]['picid'] == pic_id):
+			if(len(albid) != 1):
+				if(i != 0 and i != len(albid) - 1):
+					prevID = albid[i - 1]['picid']
+					nextID = albid[i + 1]['picid']
 				elif(i == 0):
-					nextID = pic_in_contain[i + 1]['picid']
+					nextID = albid[i + 1]['picid']
 				else:
-					prevID = pic_in_contain[i - 1]['picid']
+					prevID = albid[i - 1]['picid']
 	if request.method == "PUT":
 		json_obg = request.get_json()
 		caption = str(json_obj['caption'])

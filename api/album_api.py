@@ -74,7 +74,6 @@ def album(album_id):
 			return jsonify(errors = error),401
 		else:
 			cur.execute('SELECT * FROM AlbumAccess WHERE albumid = %d' % (album_id))
-			abort(403)
 			user_access_albums = cur.fetchall()
 			user_acces = False
 			for people in user_access_albums:
