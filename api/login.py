@@ -77,7 +77,7 @@ def loginAPI():
 		data = {
 			"username": user
 		}
-		return jsonify(data=data), 201
+		return jsonify(data=data), 200
 	"""
 	else:
 		blankUser = request.args.get('blankUser')

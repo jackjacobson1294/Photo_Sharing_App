@@ -16,7 +16,7 @@ def album(album_id):
 	if not album_id:
 		error = []
 		error.append({'message':"The requested resource could not be found"})
-		return jsonify(errors = error),401
+		return jsonify(errors = error),404
     #logged_in = False
     ##check username and stuff in javascript
     #if 'username' in session:
@@ -28,14 +28,14 @@ def album(album_id):
 	if album_id < 1:
 		error = []
 		error.append({'message':"The requested resource could not be found"})
-		return jsonify(errors = error),401
+		return jsonify(errors = error),404
 	cur.execute('USE group120db')
 	cur.execute('SELECT * FROM Album WHERE albumid = %d' % (album_id))
 	album_exist = cur.fetchall()
 	if not album_exist:
 		error = []
 		error.append({'message':"The requested resource could not be found"})
-		return jsonify(errors = error),401
+		return jsonify(errors = error),404
 	album_exist = album_exist[0]
 	pictures = []
     #owner = album_exist[0]['username']

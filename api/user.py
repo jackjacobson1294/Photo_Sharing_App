@@ -69,7 +69,7 @@ def userPost():
 			errors.append({"message":"Username must be no longer than 20 characters"})
 		elif len(user) < 3:
 			lenUser3 = True
-			errors.append({"message":"Username must be at least 3 characters long"})
+			errors.append({"message":"Usernames must be at least 3 characters long"})
 		if len(first) > 20:
 			lenFirst = True
 			errors.append({"message":"Firstname must be no longer than 20 characters"})
@@ -242,7 +242,7 @@ def userPost():
 				'lastname': session['lastname'],
 				'email': email
 			}
-			return jsonify(data = userDict), 201
+			return jsonify(data = userDict), 200
 	elif request.method == "GET":
 		logged_in = False
 
@@ -266,5 +266,5 @@ def userPost():
 			'email': email
 		}
 
-		return jsonify(data = userDict), 201
+		return jsonify(data = userDict), 200
 
