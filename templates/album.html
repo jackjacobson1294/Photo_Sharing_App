@@ -97,7 +97,7 @@
                                     },
                                     complete: function(status){
                                         if(status.status == 200){
-                                            helper(curr_user,owner);
+                                            helper(curr_user,owner,picid);
                                         }
                                     }
                                 });
@@ -108,7 +108,7 @@
                 });
             }
 
-            function helper(curr_user,owner){
+            function helper(curr_user,owner, picid){
                 console.log("hit");
                 if(curr_user == owner)
                 {
@@ -122,7 +122,7 @@
                             type: "PUT",
                             data: JSON.stringify({
                                 'caption': $("#pic_caption_input").val()}),
-                            url: 'api/v1/pic/' + id,
+                            url: 'api/v1/pic/' + picid,
                             success: function(pic){
                                 console.log(pic);
                             },
