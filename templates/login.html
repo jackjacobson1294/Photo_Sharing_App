@@ -28,9 +28,13 @@
                     url: 'api/v1/login',
                     success: function(data) {
                         temp = window.location.href;
-                        temp = temp.split("/p3")[0];
-                        console.log(temp);
-                        window.location.href = temp + "/p3";
+                        temp = temp.split("url=")[1];
+                        if(temp){
+                            window.location.href = temp;
+                        }
+                        else{
+                            window.location.href ="/p2gkisj6/p3";
+                        }
 
                     },
                     error: function(errors) {

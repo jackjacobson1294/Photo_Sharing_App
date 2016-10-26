@@ -24,10 +24,7 @@
               type: 'POST',
               url: 'api/v1/logout',
               success: function() {
-                temp = window.location.href;
-                temp = temp.split("/p3")[0];
-
-                window.location.href = temp +"/p3";
+                window.location.href ="/p2gkisj6/p3";
               },
               error: function(errors) {
                 str = JSON.parse(JSON.stringify(errors));
@@ -42,7 +39,18 @@
       });
     </script>
   {% else %}
-    <a href="{{url_for('main.login_route')}}" id="login_link">Login</a>
+    <a href="#" id="login_link">Login</a>
+    <script type="text/javascript">
+      $('#login_link').on("click", function(){
+          curr_url = window.location.href;
+          temp = window.location.href;
+          temp = temp.split("/p3")[0]; 
+          window.location.href = temp + "/p3/login?url=" + curr_url
+      });
+  </script>
+
+      
+
   {% endif %}
   <div class="center">
     {% block content %}{% endblock %}
