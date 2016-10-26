@@ -5,26 +5,41 @@
         $(document).ready( function(e) 
         {
             console.log(window.location.href);
-            curr_user = '';
             owner = '';
-
+            curr_user = '';
             
             albumidOrPicId = window.location.href;
             indicateAlbOrPic = window.location.href;
+          
             indicateAlbOrPic = indicateAlbOrPic.split("?")[1];
             indicateAlbOrPic = indicateAlbOrPic.split("=")[0];
             albumidOrPicId = albumidOrPicId.split("=")[1];
             stateObjAlbOrPic = {stateVariable:''};
+            
             if(indicateAlbOrPic == "albumid")
             {
                 history.replaceState(stateObjAlbOrPic, "title", "?albumid=" + albumidOrPicId);
                 album_page();
+                console.log("id is :" + albumidOrPicId);
             }
             else{
                 if(indicateAlbOrPic == "picid")
                 {
-                    history.replaceState(stateObjAlbOrPic, "title", "?picid=" + albumidOrPicId);
+                    //history.pushState(stateObjAlbOrPic, "title", "?picid=" + albumidOrPicId);
+                    $.ajax({
+                        type: 'GET',
+                        url: 'api/v1/user',
+                        success: function(data) {
+                            data = data.data;
+                            curr_user = data.username;
+                        },
+                        error: function(errors) {
+                            curr_user = null;
+                        }
+                    });
+
                     picture(albumidOrPicId);
+                    console.log("id is :" + albumidOrPicId);
                 }
             }
             function picture(id)
@@ -65,82 +80,111 @@
                         //check if private, if current user has access
                         if(status.status == 200){
                             $('#content').append('<img src=/static/images/' + picid + '.' + format + ' height="75" width="75" display:"inline-block">');
-                            if(curr_user == owner){
-                                $('#content').append('<form><input type="text" name="caption" id="pic_caption_input" value="' + caption + '"></form>');
-                                $('form').submit(function(e)
-                                {
-                                    $('.error').remove();
-                                    e.preventDefault();
-                                    $.ajax({
-                                        type: "PUT",
-                                        data: JSON.stringify({
-                                            'caption': $("#pic_caption_input").val()}),
-                                        url: 'http://localhost:3000/p2gkisj6/p3/api/v1/pic/' + id,
-                                        success: function(data){
-                                            
-                                        },
-                                        error: function(errors){
-                                            str = JSON.parse(JSON.stringify(errors));
-                                            str = str.responseText;
-                                            str = JSON.parse(str);
-                                            str = str.errors;
-                                            for(x in str){
-                                                $('#error_mess').append('<p class="error">' + str[x].message + '</div>');
-                                            }
+                            if(owner!=null){
+                                $.ajax
+                                ({
+                                    type: 'GET',
+                                    url: 'api/v1/album/' + albumid,
+                                    success: function(album) {
+                                        album = album.album;
+                                        owner = album.username;
+                                    },
+                                    error: function(errors) {
+                                        str = JSON.parse(JSON.stringify(errors));
+                                        message = str.responseText;
+                                        message = JSON.parse(message);
+                                        message = message.errors[0].message;
+                                        status = str.status;
+                                        $('#content').append('<p class="error">' + message + '</div>')
+                                    },
+                                    complete: function(status){
+                                        if(status.status == 200){
+                                            helper(curr_user,owner);
                                         }
-                                    });
-
+                                    }
                                 });
                             }
-                            else{
-                                $('#content').append('<p name="caption" id="pic_' + picid + '_caption">' + caption + '</p>');
-                            }
-                            $('#content').append('<a href="" id="prev_pic">Prev Pic</a><br>');
-                            $('#content').append('<a href="" id="next_pic">Next Pic</a><br>');
-                            $('#content').append('<a href="" id="parent_album">Back to Album</a><br>');
 
-                            
-
-                            $('#parent_album').click( function(e) {
-                                e.preventDefault();
-                                stateObjAlb = {stateVariable:''}
-                                history.pushState(stateObjAlb, "title", "?albumid=" + albumid)
-                                album_page();
-
-                            });
-                            $('#next_pic').click( function(e) {
-                                e.preventDefault();
-                                //stateObjNextPic = {stateVariable: addition};
-                                //history.pushState(stateObjNextPic, "title", "?picid=" + picid);
-                                stateObjPic = {stateVariable:''};
-                                if(next != '')
-                                {
-                                    stateObjPic = {stateVariable:''};
-                                    history.pushState(stateObjPic, "title", "?picid=" + next);
-                                    picture(next);
-                                }
-                            });
-                            $('#prev_pic').click( function(e) 
-                            {
-                                e.preventDefault();
-                                //stateObjPrevPic = {stateVariable: addition};
-                                //history.pushState(stateObjPrevPic, "title", "?picid=" + picid);
-                                if(prev != '')
-                                {
-                                    stateObjPic = {stateVariable:''};
-                                    history.pushState(stateObjPic, "title", "?picid=" + prev);
-                                    picture(prev);
-                                }
-                                    
-                            });
                         }
                     }
                 });
             }
+
+            function helper(curr_user,owner){
+                console.log("hit");
+                if(curr_user == owner)
+                {
+                    console.log("hit");
+                    $('#content').append('<form><input type="text" name="caption" id="pic_caption_input" value="' + caption + '"></form>');
+                    $('form').submit(function(e)
+                    {
+                        $('.error').remove();
+                        e.preventDefault();
+                        $.ajax({
+                            type: "PUT",
+                            data: JSON.stringify({
+                                'caption': $("#pic_caption_input").val()}),
+                            url: 'api/v1/pic/' + id,
+                            success: function(data){
+                                
+                            },
+                            error: function(errors){
+                                str = JSON.parse(JSON.stringify(errors));
+                                str = str.responseText;
+                                str = JSON.parse(str);
+                                str = str.errors;
+                                for(x in str){
+                                    $('#error_mess').append('<p class="error">' + str[x].message + '</div>');
+                                }
+                            }
+                        });
+
+                    });
+                }
+                else{
+                    $('#content').append('<p name="caption" id="pic_' + picid + '_caption">' + caption + '</p>');
+                }
+
+                $('#content').append('<a href="" id="prev_pic">Prev Pic</a><br>');
+                $('#content').append('<a href="" id="next_pic">Next Pic</a><br>');
+                $('#content').append('<a href="" id="parent_album">Back to Album</a><br>');
+
+                $('#parent_album').click( function(e) {
+                    e.preventDefault();
+                    stateObjAlb = {stateVariable:''}
+                    history.pushState(stateObjAlb, "title", "?albumid=" + albumid)
+                    album_page();
+
+                });
+                $('#next_pic').click( function(e) {
+                    e.preventDefault();
+                    //stateObjNextPic = {stateVariable: addition};
+                    //history.pushState(stateObjNextPic, "title", "?picid=" + picid);
+                    stateObjPic = {stateVariable:''};
+                    if(next != '')
+                    {
+                        stateObjPic = {stateVariable:''};
+                        history.pushState(stateObjPic, "title", "?picid=" + next);
+                        picture(next);
+                    }
+                });
+                $('#prev_pic').click( function(e) 
+                {
+                    e.preventDefault();
+                    //stateObjPrevPic = {stateVariable: addition};
+                    //history.pushState(stateObjPrevPic, "title", "?picid=" + picid);
+                    if(prev != '')
+                    {
+                        stateObjPic = {stateVariable:''};
+                        history.pushState(stateObjPic, "title", "?picid=" + prev);
+                        picture(prev);
+                    }
+                        
+                });
+            }
+
             window.onpopstate = function(event) 
             {
-                document.getElementById("content").innerHTML = 
-                event.state.stateVariable;
                 curUrl = window.location.href;
                 curUrl = curUrl.split("?")[1];
                 picidOrAlbId = curUrl.split("=")[1]
@@ -183,7 +227,7 @@
                     url: 'api/v1/album/' + params,
                     success: function(album) {
                         album = album.album;
-                        albumid = album.albumid
+                        albumid = album.albumid;
                         owner = album.username;
                         pics = album.pics;
                         access = album.access;
