@@ -187,7 +187,9 @@ def userPost():
 				passMatch = True
 				errors.append({'message':'Passwords do not match'})
 			specCharsPass = not (all(u.isalnum() or u == '_' for u in password1))
-			errors.append({'message':'Passwords may only contain letters, digits, and underscores'})
+			
+			if specCharsPass:
+				errors.append({'message':'Passwords may only contain letters, digits, and underscores'})
 
 			hasLet = False
 			hasNum = False 

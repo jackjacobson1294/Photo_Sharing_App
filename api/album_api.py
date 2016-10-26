@@ -14,9 +14,9 @@ def album(album_id):
 	if 'username' in session:
 		user = session['username']
 	if not album_id:
-		error = []
-		error.append({'message':"The requested resource could not be found"})
-		return jsonify(errors = error),404
+		errors = []
+		errors.append({'message':"The requested resource could not be found"})
+		return jsonify(errors = errors),404
     #logged_in = False
     ##check username and stuff in javascript
     #if 'username' in session:
@@ -26,16 +26,16 @@ def album(album_id):
     #else:
     #    user = request.args.get('username')
 	if album_id < 1:
-		error = []
-		error.append({'message':"The requested resource could not be found"})
-		return jsonify(errors = error),404
+		errors = []
+		errors.append({'message':"The requested resource could not be found"})
+		return jsonify(errors = errors),404
 	cur.execute('USE group120db')
 	cur.execute('SELECT * FROM Album WHERE albumid = %d' % (album_id))
 	album_exist = cur.fetchall()
 	if not album_exist:
-		error = []
-		error.append({'message':"The requested resource could not be found"})
-		return jsonify(errors = error),404
+		errors = []
+		errors.append({'message':"The requested resource could not be found"})
+		return jsonify(errors = errors),404
 	album_exist = album_exist[0]
 	pictures = []
     #owner = album_exist[0]['username']
@@ -70,9 +70,9 @@ def album(album_id):
 	owner = album_exist['username'];
 	if access == "private" :
 		if user == '' :
-			error = []
-			error.append({'message':"You do not have the necessary credentials for the resource"})
-			return jsonify(errors = error),401
+			errors = []
+			errors.append({'message':"You do not have the necessary credentials for the resource"})
+			return jsonify(errors = errors),401
 		else:
 			cur.execute('SELECT * FROM AlbumAccess WHERE albumid = %d' % (album_id))
 			user_access_albums = cur.fetchall()
@@ -82,8 +82,8 @@ def album(album_id):
 					user_access = True
 			if owner != user:
 				if user_access == False:
-					error = []
-					error.append({'message':"You do not have the necessary permissions for the resource"})
-					return jsonify(errors = error),403
+					errors = []
+					errors.append({'message':"You do not have the necessary permissions for the resource"})
+					return jsonify(errors = errors),403
 	album = ({'access': album_exist['access'],'albumid': album_id, 'created': album_exist['created'], 'lastupdated': album_exist['lastupdated'],'pics': pictures,'title': album_exist['title'],'username': album_exist['username']})
 	return jsonify(album = album), 200

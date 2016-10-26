@@ -115,8 +115,8 @@
                 if(curr_user == owner)
                 {
                     console.log("hit");
-                    $('#content').append('<form><input type="text" name="caption" id="pic_caption_input" value="' + caption + '"></form>');
-                    $('form').submit(function(e)
+                    $('#content').append('<form id="caption_form"><input type="text" name="caption" id="pic_caption_input" value="' + caption + '"></form>');
+                    $('#caption_form').submit(function(e)
                     {
                         $('.error').remove();
                         e.preventDefault();
@@ -125,8 +125,7 @@
                             data: JSON.stringify({
                                 'caption': $("#pic_caption_input").val()}),
                             url: 'api/v1/pic/' + id,
-                            success: function(data){
-                                
+                            success: function(pic){
                             },
                             error: function(errors){
                                 str = JSON.parse(JSON.stringify(errors));
