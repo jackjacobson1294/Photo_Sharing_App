@@ -93,7 +93,6 @@ def userPost():
 		if not re.match(r"[^@]+@[^@]+\.[^@]+", eml):
 			emailSyn = True
 			errors.append({"message":"Email address must be valid"})
-
 		if blankUser or blankFirst or blankLast or blankEml or blankPw1:
 			errors = []
 			errors.append({'message':"You did not provide the necessary fields"})
@@ -245,7 +244,8 @@ def userPost():
 			}
 			return jsonify(data = userDict), 201
 	elif request.method == "GET":
-		logged_in = False;
+		logged_in = False
+
 		if 'username' in session:
 			logged_in = True;
 		else:
@@ -265,5 +265,6 @@ def userPost():
 			'lastname': session['lastname'],
 			'email': email
 		}
+
 		return jsonify(data = userDict), 201
 

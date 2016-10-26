@@ -22,9 +22,12 @@
           e.preventDefault();
           $.ajax({
               type: 'POST',
-              url: 'http://localhost:3000/p2gkisj6/p3/api/v1/logout',
+              url: 'api/v1/logout',
               success: function() {
-                window.location.href = "http://localhost:3000/p2gkisj6/p3";
+                temp = window.location.href;
+                temp = temp.split("/p3")[0];
+
+                window.location.href = temp +"/p3";
               },
               error: function(errors) {
                 str = JSON.parse(JSON.stringify(errors));

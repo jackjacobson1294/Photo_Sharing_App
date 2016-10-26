@@ -22,7 +22,7 @@
             $.ajax({
                 type: 'GET',
                 contentType: "application/json; charset=UTF-8",
-                url: 'http://localhost:3000/p2gkisj6/p3/api/v1/user',
+                url: 'api/v1/user',
                 success: function(data) {
                     str = JSON.parse(JSON.stringify(data));
                     str = str.data;
@@ -31,7 +31,9 @@
                     $('#update_email_input').attr("value", str.email);
                 },
                 error: function() {
-                    window.location.href = "http://localhost:3000/p2gkisj6/p3/login";
+                    temp = window.location.href;
+                    temp = temp.split("/p3")[0];
+                    window.location.href = temp +"/p3/login";
                 }
             });
         });
@@ -47,9 +49,11 @@
                         'password1': $("#update_password1_input").val(),
                         'password2': $("#update_password2_input").val(),
                         'email': $("#update_email_input").val()}),
-                url: 'http://localhost:3000/p2gkisj6/p3/api/v1/user',
+                url: 'api/v1/user',
                 success: function(data) {
-                    window.location.href = "http://localhost:3000/p2gkisj6/p3/user/edit";
+                    temp = window.location.href;
+                    temp = temp.split("/p3")[0];
+                    window.location.href = temp + "/p3/user/edit";
                 },
                 error: function(errors) {
                     str = JSON.parse(JSON.stringify(errors));

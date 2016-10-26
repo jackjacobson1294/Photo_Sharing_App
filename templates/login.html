@@ -25,9 +25,13 @@
                     data: JSON.stringify(
                             {'username': $("#login_username_input").val(),
                             'password': $("#login_password_input").val()}),
-                    url: 'http://localhost:3000/p2gkisj6/p3/api/v1/login',
+                    url: 'api/v1/login',
                     success: function(data) {
-                        window.location.href = "http://localhost:3000/p2gkisj6/p3/";
+                        temp = window.location.href;
+                        temp = temp.split("/p3")[0];
+                        console.log(temp);
+                        window.location.href = temp + "/p3";
+
                     },
                     error: function(errors) {
                         str = JSON.parse(JSON.stringify(errors));
