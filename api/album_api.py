@@ -57,6 +57,7 @@ def album(album_id):
     #    has_access = True
     #if not has_access:
     #    abort(403)
+
 	cur.execute('SELECT * FROM Contain WHERE albumid = %d' % (album_id))
 	pics = cur.fetchall()
 	cur.execute('SELECT * FROM Photo')
@@ -67,8 +68,8 @@ def album(album_id):
 				pictures.append({'albumid':album_id,'caption':pic['caption'],'date':photo['picDate'],'format':photo['format'],'picid':pic['picid'],'sequencenum':pic['sequencenum']})
 	access = album_exist['access'];
 	owner = album_exist['username'];
-	if (access == "private"):
-		if(user == ''):
+	if access == "private" :
+		if user == '' :
 			error = []
 			error.append({'message':"You do not have the necessary credentials for the resource"})
 			return jsonify(errors = error),401

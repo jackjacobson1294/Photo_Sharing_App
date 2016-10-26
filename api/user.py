@@ -53,7 +53,7 @@ def userPost():
 			if c.isdigit():
 				hasNum = True 
 		if not (hasLet and hasNum):
-			errors.append({"message":"Passwords may only contain letters, digits, and underscores"})
+			errors.append({"message":"Passwords must contain at least one letter and one number"})
 			passSyn = True
 
 		cur.execute('SELECT * FROM User WHERE lower(username) = "%s"' % (temp_lower))

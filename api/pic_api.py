@@ -87,6 +87,6 @@ def pic(pic_id):
 		else:
 			cur.execute('UPDATE Contain SET caption = "%s" WHERE picid = "%s"' % (caption, pic_id))
 			cur.execute('UPDATE Album SET lastupdated = CURRENT_TIME() WHERE albumid = "%s"' % (album_id))
-	pic = ({'albumid': alb[0]['albumid'],'owner':owner, 'caption': caption, 'format': pic[0]['format'], 'next': nextID, 'picid': pic_id, 'prev': prevID})
+	pic = ({'albumid': alb[0]['albumid'], 'caption': caption, 'format': pic[0]['format'], 'next': nextID, 'picid': pic_id, 'prev': prevID})
 	return jsonify(pic=pic), 200
 
