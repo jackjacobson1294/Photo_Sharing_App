@@ -57,7 +57,6 @@
                     type: 'GET',
                     url: 'api/v1/pic/' + id,
                     success: function(pic){
-                        pic = pic.pic;
                         console.log(pic);
                         albumid = pic.albumid;
                         caption = pic.caption;
@@ -86,7 +85,6 @@
                                     type: 'GET',
                                     url: 'api/v1/album/' + albumid,
                                     success: function(album) {
-                                        album = album.album;
                                         owner = album.username;
                                     },
                                     error: function(errors) {
@@ -227,7 +225,6 @@
                     url: 'api/v1/album/' + params,
                     success: function(album) {
                         console.log(album);
-                        album = album.album;
                         albumid = album.albumid;
                         owner = album.username;
                         pics = album.pics;

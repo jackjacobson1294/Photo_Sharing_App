@@ -85,5 +85,5 @@ def album(album_id):
 					errors = []
 					errors.append({'message':"You do not have the necessary permissions for the resource"})
 					return jsonify(errors = errors),403
-	album = {'access': album_exist['access'],'albumid': album_id, 'created': album_exist['created'], 'lastupdated': album_exist['lastupdated'],'pics': pics,'title': album_exist['title'],'username': album_exist['username']}
-	return jsonify(album = album), 200
+	#album = {'access': album_exist['access'],'albumid': album_id, 'created': album_exist['created'], 'lastupdated': album_exist['lastupdated'],'pics': pics,'title': album_exist['title'],'username': album_exist['username']}
+	return jsonify({'access': album_exist['access'],'albumid': album_id, 'created': album_exist['created'], 'lastupdated': album_exist['lastupdated'],'pics': pics,'title': album_exist['title'],'username': album_exist['username']}), 200
