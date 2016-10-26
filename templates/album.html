@@ -126,6 +126,7 @@
                                 'caption': $("#pic_caption_input").val()}),
                             url: 'api/v1/pic/' + id,
                             success: function(pic){
+                                console.log(pic);
                             },
                             error: function(errors){
                                 str = JSON.parse(JSON.stringify(errors));
@@ -225,6 +226,7 @@
                     type: 'GET',
                     url: 'api/v1/album/' + params,
                     success: function(album) {
+                        console.log(album);
                         album = album.album;
                         albumid = album.albumid;
                         owner = album.username;
@@ -258,7 +260,7 @@
                                 id = $(this).attr("id");
                                 id = id.split("_")[1];
                                 stateObjPic = {stateVariable:''};
-                                history.pushState(stateObjPic,"title","?picid=" + id);
+                                history.pushState(stateObjPic,"title","pic?picid=" + id);
                                 picture(id);                            
                             });
                         }

@@ -37,7 +37,7 @@ def album(album_id):
 		errors.append({'message':"The requested resource could not be found"})
 		return jsonify(errors = errors),404
 	album_exist = album_exist[0]
-	pictures = []
+	pics = []
     #owner = album_exist[0]['username']
     #owner_var = False
     #has_access = False
@@ -59,13 +59,13 @@ def album(album_id):
     #    abort(403)
 
 	cur.execute('SELECT * FROM Contain WHERE albumid = %d' % (album_id))
-	pics = cur.fetchall()
+	pictures = cur.fetchall()
 	cur.execute('SELECT * FROM Photo')
 	photos = cur.fetchall()
-	for pic in pics:
+	for pic in pictures:
 		for photo in photos:
 			if pic['picid'] == photo['picid']:
-				pictures.append({'albumid':album_id,'caption':pic['caption'],'date':photo['picDate'],'format':photo['format'],'picid':pic['picid'],'sequencenum':pic['sequencenum']})
+				pics.append({'albumid':album_id,'caption':pic['caption'],'date':photo['picDate'],'format':photo['format'],'picid':pic['picid'],'sequencenum':pic['sequencenum']})
 	access = album_exist['access'];
 	owner = album_exist['username'];
 	if access == "private" :
@@ -76,7 +76,7 @@ def album(album_id):
 		else:
 			cur.execute('SELECT * FROM AlbumAccess WHERE albumid = %d' % (album_id))
 			user_access_albums = cur.fetchall()
-			user_acces = False
+			user_access = False
 			for people in user_access_albums:
 				if(people['username'] == user):
 					user_access = True
@@ -85,5 +85,5 @@ def album(album_id):
 					errors = []
 					errors.append({'message':"You do not have the necessary permissions for the resource"})
 					return jsonify(errors = errors),403
-	album = ({'access': album_exist['access'],'albumid': album_id, 'created': album_exist['created'], 'lastupdated': album_exist['lastupdated'],'pics': pictures,'title': album_exist['title'],'username': album_exist['username']})
+	album = {'access': album_exist['access'],'albumid': album_id, 'created': album_exist['created'], 'lastupdated': album_exist['lastupdated'],'pics': pics,'title': album_exist['title'],'username': album_exist['username']}
 	return jsonify(album = album), 200

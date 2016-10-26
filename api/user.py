@@ -62,6 +62,7 @@ def userPost():
 			uniqueUser = True
 			errors.append({"message":"This username is taken"})
 		if user == '':
+			errors.append({"message":"Usernames must be at least 3 characters long"})
 			blankUser = True
 			lenUser3 = True
 		elif len(user) > 20:
@@ -70,6 +71,10 @@ def userPost():
 		elif len(user) < 3:
 			lenUser3 = True
 			errors.append({"message":"Usernames must be at least 3 characters long"})
+		if user != '':
+			specCharsUser = not (all(u.isalnum() or u == '_' for u in user))	
+			if specCharsUser:
+				errors.append({'message':'Usernames may only contain letters, digits, and underscores'})
 		if len(first) > 20:
 			lenFirst = True
 			errors.append({"message":"Firstname must be no longer than 20 characters"})
@@ -84,6 +89,7 @@ def userPost():
 		if pw1 == '':
 			blankPw1 = True
 			lenPass = True
+			errors.append({"message":"Passwords must be at least 8 characters long"})
 		elif len(pw1) < 8:
 			lenPass = True
 			errors.append({"message":"Passwords must be at least 8 characters long"})
@@ -98,7 +104,7 @@ def userPost():
 			errors.append({'message':"You did not provide the necessary fields"})
 			return jsonify(errors = errors), 422
 
-		if lenUser or lenFirst or lenLast or uniqueUser or lenUser3 or lenPass or passMatch or specCharsUser or specCharsPass or emailLen or emailSyn or passSyn:
+		if specCharsUser or lenUser or lenFirst or lenLast or uniqueUser or lenUser3 or lenPass or passMatch or specCharsUser or specCharsPass or emailLen or emailSyn or passSyn:
 			return jsonify(errors = errors), 422
 		
 		else:
