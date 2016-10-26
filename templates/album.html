@@ -141,17 +141,17 @@
                 var pics = [];
                 var access = '';
                 var title = '';
-                // $.ajax({
-                //     type: 'GET',
-                //     url: 'api/v1/user',
-                //     success: function(data) {
-                //         data = data.data;
-                //         current_user = data.username;
-                //     },
-                //     error: function(errors) {
-                //         current_user = null;
-                //     }
-                // });
+                $.ajax({
+                    type: 'GET',
+                    url: 'api/v1/user',
+                    success: function(data) {
+                        data = data.data;
+                        current_user = data.username;
+                    },
+                    error: function(errors) {
+                        current_user = null;
+                    }
+                });
                 $.ajax
                 ({
                     type: 'GET',
@@ -179,25 +179,90 @@
                         {
                             $('#content').append('<p>' + title + ' by ' + owner + '</p>');
                             for(pic in pics){
-                                $('#content').append('<a id="pic_' + pics[pic].picid + '_link" class="picture"><img src=/static/images/' + pics[pic].picid + '.' + pics[pic].format + ' height="75" width="75" display:"inline-block"></a><br>' + pics[pic].date + '<br>' + pics[pic].caption + '<br>');
+                                $('#content').append('<a id="pic_' + pics[pic].picid + '_link" class="picture"><img src=/static/images/' + pics[pic].picid + '.' + pics[pic].format + ' height="75" width="75" display:"inline-block"></a><br>' + pics[pic].date + '<br>' + '<br>');
                             }
                             
 
-                            $("a.picture").on("click", function(e) 
-                            {
-                                e.preventDefault();
-                                id = $(this).attr("id");
-                                id = id.split("_")[1];
-                                stateObjPic = {stateVariable:''};
-                                history.pushState(stateObjPic, "title", "?picid=" + id);
-                                picture(id);
+                           $("a").on("click", function(e) {
+                            $('#content').empty();
+                            id = $(this).attr("id");
+                            id = id.split("_")[1];
+                            var albumid = '';
+                            var caption = '';
+                            var format = '';
+                            var next = '';
+                            var picid = '';
+                            var prev = '';
+                            $.ajax({
+                                type: 'GET',
+                                url: 'http://localhost:3000/p2gkisj6/p3/api/v1/pic/' + id,
+                                success: function(pic){
+                                    pic = pic.pic;
+                                    console.log(pic);
+                                    albumid = pic.albumid;
+                                    caption = pic.caption;
+                                    console.log(caption);
+                                    format = pic.format;
+                                    next = pic.next;
+                                    picid = pic.picid;
+                                    prev = pic.prev;
+                                },
+                                error: function(errors){
+                                    str = JSON.parse(JSON.stringify(errors));
+                                    message = str.responseText;
+                                    message = JSON.parse(message);
+                                    message = message.errors[0].message;
+                                    status = str.status;
+                                    $('#content').append('<p class="error">' + message + '</div>')
+                                },
+                                complete: function(status){
+                                    //check if private, if current user has access
+                                    console.log(status);
+                                    if(status.status == 200){
+                                        $('#content').append('<img src=/static/images/' + picid + '.' + format + ' height="75" width="75" display:"inline-block">');
+                                        if(owner == current_user){
+                                            $('#content').append('<form><input type="text" name="caption" id="pic_caption_input" value="' + caption + '"></form>');
+                                        }
+                                        else{
+                                            $('#content').append('<p name="caption" id="pic_' + picid + '_caption">' + caption + '</p>');
+                                        }
+                                        $('#content').append('<a href="" id="prev_pic">Prev Pic</a><br>');
+                                        $('#content').append('<a href="" id="next_pic">Next Pic</a><br>');
+                                        $('#content').append('<a href="" id="parent_album">Back to Album</a><br>');
+
+                                        $('form').submit(function(e){
+                                            $('.error').remove();
+                                            e.preventDefault();
+                                            $.ajax({
+                                                type: "PUT",
+                                                data: JSON.stringify({
+                                                    'caption': $("#pic_caption_input").val()}),
+                                                url: 'http://localhost:3000/p2gkisj6/p3/api/v1/pic/' + id,
+                                                success: function(data){
+                                                    
+                                                },
+                                                error: function(errors){
+                                                    str = JSON.parse(JSON.stringify(errors));
+                                                    str = str.responseText;
+                                                    str = JSON.parse(str);
+                                                    str = str.errors;
+                                                    for(x in str){
+                                                        $('#error_mess').append('<p class="error">' + str[x].message + '</div>');
+                                                    }
+                                                }
+                                            });
+
+                                        });
+                                    }
+                                }
                             });
-                        }
+                        });
                     }
-                });
-            }
+                }
   
-        });
+            });
+        }
+    });
             
 
     </script>

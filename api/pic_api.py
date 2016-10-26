@@ -65,6 +65,7 @@ def pic(pic_id):
 			return jsonify(errors=error), 401
 	cur.execute('SELECT * FROM Contain WHERE albumid = %d' % (album_id))
 	albid = cur.fetchall()
+	caption = pic_in_contain[0]['caption']
 	prevID = ''
 	nextID = ''
 	for i in range(0, len(albid)):
@@ -78,15 +79,14 @@ def pic(pic_id):
 				else:
 					prevID = albid[i - 1]['picid']
 	if request.method == "PUT":
-		json_obg = request.get_json()
-		caption = str(json_obj['caption'])
-		if caption == NULL: #unsure
+		caption = request.get_json(['caption'])['caption']
+		if  not caption:
 			errors = []
 			errors.append({'message':"You did not provide the necessary fields"})
 			return jsonify(errors = error), 422
 		else:
 			cur.execute('UPDATE Contain SET caption = "%s" WHERE picid = "%s"' % (caption, pic_id))
 			cur.execute('UPDATE Album SET lastupdated = CURRENT_TIME() WHERE albumid = "%s"' % (album_id))
-	pic = ({'albumid': alb[0]['albumid'],'owner':owner, 'caption': pic_in_contain[0]['caption'], 'format': pic[0]['format'], 'next': nextID, 'picid': pic_id, 'prev': prevID})
+	pic = ({'albumid': alb[0]['albumid'],'owner':owner, 'caption': caption, 'format': pic[0]['format'], 'next': nextID, 'picid': pic_id, 'prev': prevID})
 	return jsonify(pic=pic), 200
 
