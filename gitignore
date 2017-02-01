@@ -2,3 +2,4 @@ venv/
 static/images
 *.pyc
 config.py
+sanity_test.py

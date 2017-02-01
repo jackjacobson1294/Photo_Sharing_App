@@ -11,7 +11,7 @@ def userPost():
 	if request.method == "POST":
 		db = extensions.connect_to_database()
 		cur = db.cursor()
-		cur.execute('use group120db')
+		cur.execute('use maindb')
 		json_obj = request.get_json();
 		user = str(json_obj['username'])
 		first = str(json_obj['firstname'])
@@ -134,7 +134,7 @@ def userPost():
 			return jsonify(errors = errors), 401
 		db = extensions.connect_to_database()
 		cur = db.cursor()
-		cur.execute('use group120db')
+		cur.execute('use maindb')
 		firstLength = False
 		lastLength = False
 		lenPass = False
@@ -263,7 +263,7 @@ def userPost():
 			return jsonify(errors = errors), 401
 		db = extensions.connect_to_database()
 		cur = db.cursor()
-		cur.execute('use group120db')
+		cur.execute('use maindb')
 		cur.execute('SELECT * FROM User WHERE username = "%s"' % (session['username']))
 		eml = cur.fetchall()
 		email = eml[0]['email']

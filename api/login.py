@@ -10,7 +10,7 @@ login = Blueprint('login', __name__, template_folder='templates')
 def loginAPI():
 	db = extensions.connect_to_database()
 	cur = db.cursor()
-	cur.execute('use group120db')
+	cur.execute('use maindb')
 	json_obj = request.get_json();
 	user = str(json_obj[('username')])
 	passwd = str(json_obj[('password')])

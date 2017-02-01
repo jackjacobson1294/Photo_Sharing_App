@@ -1,4 +1,4 @@
-USE group120db;
+USE maindb;
 
 DROP TABLE IF EXISTS Contain, Photo, Album, User, AlbumAccess;
 

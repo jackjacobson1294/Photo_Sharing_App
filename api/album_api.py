@@ -29,7 +29,7 @@ def album(album_id):
 		errors = []
 		errors.append({'message':"The requested resource could not be found"})
 		return jsonify(errors = errors),404
-	cur.execute('USE group120db')
+	cur.execute('USE maindb')
 	cur.execute('SELECT * FROM Album WHERE albumid = %d' % (album_id))
 	album_exist = cur.fetchall()
 	if not album_exist:

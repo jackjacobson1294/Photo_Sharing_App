@@ -15,7 +15,7 @@ def albums_edit_route():
         user = session['username']
     else:
         return redirect(url_for('main.login_route'))
-    cur.execute('use group120db')
+    cur.execute('use maindb')
     cur.execute('SELECT * FROM User WHERE username = "%s"' % (user))
     user_exist = cur.fetchall()
     if not user_exist:
@@ -70,7 +70,7 @@ def albums_route():
             return redirect(url_for('main.login_route'))
     db = extensions.connect_to_database()
     cur = db.cursor()
-    cur.execute('use group120db')
+    cur.execute('use maindb')
     cur.execute('SELECT * FROM User WHERE username = "%s"' % (user))
     user_exist = cur.fetchall()
     if not user_exist:

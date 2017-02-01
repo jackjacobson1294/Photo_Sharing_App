@@ -19,7 +19,7 @@ album = Blueprint('album', __name__, template_folder='templates')
 def album_edit_route():
     db = extensions.connect_to_database()
     cur = db.cursor()
-    cur.execute('USE group120db')
+    cur.execute('USE maindb')
     logged_in = False
     if 'username' in session:
         logged_in = True
@@ -107,7 +107,7 @@ def album_edit_route():
             file_name.save(os.path.join(app.config['UPLOAD_FOLDER'], final_file_name))
             db = extensions.connect_to_database()
             cur = db.cursor()
-            cur.execute('USE group120db')
+            cur.execute('USE maindb')
             cur.execute('SELECT picid FROM Photo WHERE picid = "%s"' % (pic_id))
             existing_pic = cur.fetchall()
             if not existing_pic:

@@ -11,7 +11,7 @@ main = Blueprint('main', __name__, template_folder='templates')
 def main_route():
 	db = extensions.connect_to_database()
 	cur = db.cursor()
-	cur.execute('use group120db')
+	cur.execute('use maindb')
 	if 'username' in session:
 		user = session['username']
 		cur.execute('SELECT * FROM User WHERE username = "%s"' % (user))

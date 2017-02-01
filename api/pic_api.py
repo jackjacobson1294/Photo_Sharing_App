@@ -19,7 +19,7 @@ def pic(pic_id):
 		errors = []
 		errors.append({'message':"The requested resource could not be found"})
 		return jsonify(errors = errors),404
-	cur.execute('USE group120db')
+	cur.execute('USE maindb')
 	cur.execute('SELECT * FROM Photo WHERE picid = "%s"' % (pic_id))
 	pic = cur.fetchall()
 	if not pic:
